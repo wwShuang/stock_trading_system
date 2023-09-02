@@ -1,0 +1,115 @@
+  .component {
+    width: 100%;
+    height: 100%;
+  }
+
+  .user-stock-chart {
+    position: relative;
+    width: 500px;
+    margin-top: 16px;
+    min-height: 20%;
+    /* border: 0.1px solid rgba(89, 181, 174, 0.6); */
+  }
+
+  .user-stock {
+    position: relative;
+    width: 100%;
+    margin-top: 16px;
+    min-height: 60%;
+    /* border: 0.1px solid rgba(89, 181, 174, 0.6); */
+  }
+
+  .table-operations {
+    margin-bottom: 16px;
+  }
+
+  .table-operations > button {
+    margin-right: 8px;
+  }
+
+  .button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  strong {
+    color: rgba(64, 64, 64, 0.6);
+  }
+
+  .login-form {
+    max-width: 400px;
+  }
+
+  .login-form-margin {
+    margin-bottom: 16px;
+  }
+
+  .login-form-forgot {
+    float: right;
+  }
+
+  .login-form-button {
+    width: 100%;
+  }
+
+  .search-box {
+    padding: 8px;
+  }
+  
+  .search-box input {
+    width: 188px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .search-box button {
+    width: 90px;
+  }
+  
+  .search-button {
+    margin-right: 8px;
+  }
+  
+  .fither-box {
+    padding: 8px;
+  }
+  
+  .fither-box input {
+    width: 90px;
+    margin-bottom: 8px;
+    margin-left: 3px;
+    display: block;
+  }
+  
+  .fither-box button {
+    width: 90px;
+  }
+  
+  .fither-button {
+    margin-right: 8px;
+  }
+  
+  .date-box {
+    padding: 8px;
+  }
+  
+  .date-box input {
+    width: 90px;
+    margin-bottom: 8px;
+    margin-left: 3px;
+    display: block;
+  }
+  
+  .date-box button {
+    width: 100px;
+  }
+  
+  .date-button {
+    margin-right: 8px;
+  }
+  
+  nz-date-picker {
+    width: 160px;
+    margin: 0 8px 12px 0;
+  }

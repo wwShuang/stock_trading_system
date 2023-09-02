@@ -1,0 +1,200 @@
+<div class="component">
+  <nz-card class="user-stock-chart" style="width: 1200px; height: 400px;">
+    <div *ngIf="isPieVisible" >
+      <canvasjs-chart [options]="chartOptions" [styles]="{width: '100%', height:'360px'}"></canvasjs-chart>
+    </div>
+  </nz-card>
+  <nz-card class="user-stock">
+    <nz-spin [nzSpinning]="userStockLoading">
+      <div class="table-operations" style="margin-top: 16px">
+        <!-- <button nz-button (click)="sortByAge()">Sort price</button> -->
+        <!-- <button nz-button (click)="resetFilters()">Clear filters</button> -->
+        <button nz-button (click)="resetSortAndFilters()">Clear searchs and sorters</button>
+      </div>
+      <nz-table [nzLoading]="userStockLoading" #filterTable [nzData]="listOfDisplayData" [nzPageSize]="5000"
+                nzTableLayout="fixed" [nzScroll]="{ x: '1100px'}" [nzShowPagination]="showPagination">
+        <thead>
+          <tr>
+            <th
+              *ngFor="let column of listOfColumns; trackBy: trackByName"
+              [(nzSortOrder)]="column.sortOrder"
+              [nzSortFn]="column.sortFn"
+              [nzFilters]="column.listOfFilter"
+              [nzFilterFn]="column.filterFn"
+              [nzWidth]="column.width"
+              [nzShowFilter]="column.showFilter"
+              [nzCustomFilter]="column.showSelect"
+            >
+            {{ column.name }}
+            <nz-filter-trigger [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+              <button *ngIf="column.name == 'Company' || column.name == 'Name' " style="border: none; background-color: transparent;"
+               (click)="showSearchModal(column.name)">
+                <i nz-icon nzType="search"></i>
+              </button>
+              <button *ngIf="column.name == 'PurchaseDate' || column.name == 'CurrentPrice'
+              || column.name == 'Count' || column.name == 'Profit' "
+                      style="border: none; background-color: transparent;" (click)="showFitherModal(column.name)">
+                <i nz-icon nzType="filter"></i>
+              </button>
+            </nz-filter-trigger>
+            </th>
+            <th nzRight nzWidth="80px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of filterTable.data">
+            <td>{{ data.number }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.company }}</td>
+            <td>{{ data.purchaseDate | date :'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>{{ data.currentPrice | number:'0.2-2' }}</td>
+            <td>{{ data.count }}</td>
+            <td>
+              <nz-tag nzColor="success" *ngIf="data.profit >= 0">{{ data.profit | number:'0.2-2' }}</nz-tag>
+              <nz-tag nzColor="error" *ngIf="data.profit < 0">{{ data.profit | number:'0.2-2' }}</nz-tag>
+            </td>
+            <td nzRight>
+              <button class="button" nz-button nzType="primary" nzGhost (click)="showModal(data)">detail</button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <div *ngIf="showSelectBox" class="ant-table-filter-dropdown">
+          <div class="search-box">
+            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="reset()">Reset</button>
+          </div>
+        </div>
+        <div *ngIf="showFitherBox" class="ant-table-filter-dropdown">
+          <div class="fither-box">
+            <div nz-row>
+              <input type="text" nz-input placeholder="min" [(ngModel)]="minValue" />
+              <input type="text" nz-input placeholder="max" [(ngModel)]="maxValue" />
+            </div>
+            <button nz-button nzSize="small" nzType="primary" (click)="filterValve()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="resetFilter()">Reset</button>
+          </div>
+        </div>
+        <div *ngIf="showDateBox" class="ant-table-filter-dropdown">
+          <div class="date-box">
+            <div nz-row>
+              <nz-date-picker
+                [nzDisabledDate]="disabledStartDate"
+                nzShowTime
+                nzFormat="yyyy-MM-dd HH:mm:ss"
+                [(ngModel)]="minValue"
+                nzPlaceHolder="min"
+                (nzOnOpenChange)="handleStartOpenChange($event)"
+              ></nz-date-picker>
+              <nz-date-picker
+                #endDatePicker
+                [nzDisabledDate]="disabledEndDate"
+                nzShowTime
+                nzFormat="yyyy-MM-dd HH:mm:ss"
+                [(ngModel)]="maxValue"
+                nzPlaceHolder="max"
+              ></nz-date-picker>
+            </div>
+            <button nz-button nzSize="small" nzType="primary" (click)="filterValve()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="resetFilter()">Reset</button>
+          </div>
+        </div>
+      </nz-dropdown-menu>
+      <nz-modal [(nzVisible)]="isVisible" nzTitle="User Stock Details" (nzOnCancel)="handleCancel()">
+        <ng-container *nzModalContent>
+          <nz-table *ngIf="isTableVisible" #basicTable [nzData]="userStockDetail" [nzScroll]="{ y: '240px' }" [nzShowPagination]="showPagination">
+            <thead>
+              <tr>
+                <th nzWidth="170px">Date</th>
+                <th>Price</th>
+                <th>Count</th>
+                <th>Buy/Sell</th>
+                <th>StockPrice</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of basicTable.data">
+                <td>{{ data.date | date :'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td>{{ data.price | number:'0.2-2' }}</td>
+                <td>{{ data.count }}</td>
+                <td>
+                  <nz-tag nzColor="success" *ngIf="data.state == 0"> buy </nz-tag>
+                  <nz-tag nzColor="error" *ngIf="data.state == 1"> sell </nz-tag>
+                </td>
+                <td>{{ data.currentPrice }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+          <div *ngIf="isTableVisible == false">
+            <canvasjs-chart [options]="UserStockChartOptions" [styles]="{width: '100%', height:'360px'}"
+                    (chartInstance)="getChartInstance($event)"></canvasjs-chart>
+          </div>
+        </ng-container>
+        <div *nzModalFooter>
+          <nz-tag nzColor="success"> total count &nbsp; {{ this.totalCount }} </nz-tag>
+          <nz-tag nzColor="success"> current price &nbsp; {{ this.currentPrice }} </nz-tag>
+          <button *ngIf="isTableVisible == false" nz-button nzType="primary" (click)="switchTable()">table</button>
+          <button *ngIf="isTableVisible" nz-button nzType="primary" (click)="switchTable()">chart</button>
+          <button nz-button nzType="primary" (click)="handleOk()">sell</button>
+          <button nz-button nzType="default" (click)="handleCancel()">cancel</button>
+        </div>
+      </nz-modal>
+      <nz-modal [(nzVisible)]="isSellVisible" nzTitle="Sell Stock" (nzOnCancel)="handleSellCancel()">
+        <ng-container *nzModalContent>
+          <form nz-form [formGroup]="sellForm" class="login-form" (ngSubmit)="submitForm()">
+            <nz-form-item>
+              <nz-form-label [nzSm]="8" [nzXs]="30" nzRequired nzFor="totalCount">total count</nz-form-label>
+              <nz-form-control>
+                <nz-input-group>
+                  <input type="text" nz-input formControlName="totalCount" placeholder="total count" readonly>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label [nzSm]="8" [nzXs]="30" nzRequired nzFor="currentPrice">current price</nz-form-label>
+              <nz-form-control>
+                <nz-input-group>
+                  <input type="text" nz-input formControlName="currentPrice" placeholder="currentPrice" readonly>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label [nzSm]="8" [nzXs]="30" nzRequired nzFor="sellCount">sell count</nz-form-label>
+              <nz-form-control [nzErrorTip]="errorTpl">
+                <nz-input-group>
+                  <input nz-input formControlName="sellCount" placeholder="sellCount" />
+                </nz-input-group>
+                <ng-template #errorTpl let-control>
+                  <ng-container *ngIf="control.hasError('required') || control.hasError('pattern')">
+                    Please input a number!
+                  </ng-container>
+                  <ng-container *ngIf="control.hasError('max')">
+                    Please enter a number less than {{this.totalCount}}!
+                  </ng-container>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+        </ng-container>
+        <div *nzModalFooter>
+          <button nz-button nzType="primary" (click)="submitForm()">Confirm</button>
+          <button nz-button nzType="default" (click)="handleSellCancel()">Cancel</button>
+        </div>
+      </nz-modal>
+    </nz-spin>
+
+    <nz-modal [(nzVisible)]="showMessage" nzTitle="Trade Information" (nzOnCancel)="handleCancel()" nzWidth="300px">
+      <ng-container *nzModalContent>
+        <p><b>Trade is Successful！</b></p>
+      </ng-container>
+
+      <div *nzModalFooter>
+        <button nz-button nzType="primary" (click)="closeMessage()" >OK</button>
+      </div>
+
+    </nz-modal>
+
+  </nz-card>
+</div>

@@ -1,0 +1,45 @@
+<nz-layout class="layout">
+    <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" nzBreakpoint="lg" [nzCollapsedWidth]="0">
+      <div class="logo">
+        <img style="width: 100%; height: 100%; background-color: rgba(63, 62, 62, 0.2);" src="../assets/stock.png" alt=""/>
+      </div>
+      <ul nz-menu nzTheme="dark" nzMode="inline">
+        <li nz-menu-item routerLink="/user">
+          <span nz-icon nzType="user"></span>
+          <span>user</span>
+        </li>
+        <li nz-menu-item routerLink="/stock">
+            <span nz-icon nzType="video-camera"></span>
+            <span>stock</span>
+        </li>
+      </ul>
+    </nz-sider>
+    <nz-layout>
+      <nz-header>
+          <!-- <span
+            class="title"
+          > financial portfolio
+        </span> -->
+        <div nz-row>
+            <div nz-col nzSpan="8">
+                <span
+            class="trigger"
+            nz-icon
+            [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+            (click)="isCollapsed = !isCollapsed"
+            ></span>
+            </div>
+            <div nz-col nzSpan="8" nzOffset="8">
+              <nz-avatar nzIcon="user"  nz-popover  [nzPopoverTitle]="userInfo.account" nzPopoverContent="balance: {{userInfo.balance}}" nzSrc="//zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></nz-avatar>
+                <!-- <a class="logout" herf="#"><span nz-icon nzSize="20" nzType="logout" nzTheme="outline"></span></a> -->
+            </div>
+        </div>
+      </nz-header>
+      <nz-content>
+        <div class="inner-content">
+            <router-outlet></router-outlet>
+        </div>
+      </nz-content>
+      <!-- <nz-footer>Ant Design ©2020 Implement By Angular</nz-footer> -->
+    </nz-layout>
+</nz-layout>

@@ -1,0 +1,53 @@
+  .layout {
+    max-height: 100%;
+  }
+
+  .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .title {
+    font-size: 18px;
+    line-height: 64px;
+    margin-left: 140px;
+  }
+
+  .logo {
+    height: 32px;
+    /* font-size: 14px;
+    color: #fff; */
+    background: rgba(14, 14, 14, 0.2);
+    margin: 16px 0px 16px 0px;
+  }
+
+  nz-header {
+    background: #fff;
+    padding: 0;
+  }
+
+  nz-content {
+    margin: 24px 16px 0;
+  }
+
+  .inner-content {
+    padding: 24px;
+    background: #fff;
+    height: 100%;
+    overflow-y: auto !important;
+  }
+
+  nz-footer {
+    text-align: center;
+  }
+
+  nz-avatar {
+    margin-left: 250px;
+  }
+
+  .logout {
+    margin-left: 20px;
+  }
